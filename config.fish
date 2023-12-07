@@ -42,6 +42,7 @@ set -gx PYENV_ROOT $HOME/.pyenv/shims
 set -gx PATH $PYENV_ROOT:$PATH
 set -gx PIPENV_PYTHON $PYENV_ROOT/python
 
+set -gx PATH $HOME/.jenv/bin $PATH
 # NVM
 function __check_rvm --on-variable PWD --description 'Do nvm stuff'
   status --is-command-substitution; and return
