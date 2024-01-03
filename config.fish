@@ -40,8 +40,12 @@ set -gx OPENAI_API_KEY $OPENAI_API_KEY
 
 # Tmux
 function tmux
-  set -l session_name (basename (pwd))
-  command tmux new-session -A -s $session_name
+    if count $argv > /dev/null
+        command tmux $argv
+    else
+        set -l session_name (basename (pwd))
+        command tmux new-session -A -s $session_name
+    end
 end
 
 # Pyenv
