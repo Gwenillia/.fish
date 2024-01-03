@@ -22,7 +22,7 @@ if type -q exa
   alias lla "ll -a"
 end
 
-export STARSHIP_DISTRO=""
+export STARSHIP_DISTRO=""
 
 # set global  variables
 set -gx EDITOR vim
@@ -30,12 +30,19 @@ set -gx PATH bin $PATH
 set -gx PATH ~/bin $PATH
 set -gx PATH ~/.local/bin $PATH
 set -gx MYVIMRC ~/.config/vim/.vimrc
+set -gx H5P_NO_UPDATES 1
 
 # NodeJS
 set -gx PATH node_modules/.bin $PATH
 
 # OpenAI 
 set -gx OPENAI_API_KEY $OPENAI_API_KEY
+
+# Tmux
+function tmux
+  set -l session_name (basename (pwd))
+  command tmux new-session -A -s $session_name
+end
 
 # Pyenv
 set -gx PYENV_ROOT $HOME/.pyenv/shims
@@ -58,3 +65,4 @@ if test -f $LOCAL_CONFIG
   source $LOCAL_CONFIG
 end
 starship init fish | source
+
