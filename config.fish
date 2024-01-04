@@ -38,16 +38,6 @@ set -gx PATH node_modules/.bin $PATH
 # OpenAI 
 set -gx OPENAI_API_KEY $OPENAI_API_KEY
 
-# Tmux
-function tmux
-    if count $argv > /dev/null
-        command tmux $argv
-    else
-        set -l session_name (basename (pwd))
-        command tmux new-session -A -s $session_name
-    end
-end
-
 # Pyenv
 set -gx PYENV_ROOT $HOME/.pyenv/shims
 set -gx PATH $PYENV_ROOT:$PATH
