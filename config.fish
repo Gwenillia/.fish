@@ -16,7 +16,7 @@ alias ll "ls -l"
 alias lla "ll -A"
 alias g git
 alias :q exit
-alias vim $NIGHTLY_NVIM
+alias vim $HOME/nvim-nightly/bin/nvim
 
 if type -q exa
   alias ll "exa -l -g --icons"
@@ -34,7 +34,6 @@ set -gx PATH ~/bin $PATH
 set -gx PATH ~/.local/bin $PATH
 set -gx MYVIMRC ~/.config/vim/.vimrc
 set -gx H5P_NO_UPDATES 1
-set -gx NIGHTLY_NVIM $HOME/nvim-nightly/bin/nvim
 
 # NodeJS
 set -gx PATH node_modules/.bin $PATH
