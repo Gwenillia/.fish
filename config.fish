@@ -23,6 +23,11 @@ if type -q eza
   alias lla "ll -a"
 end
 
+## docker aliases
+alias dcu "docker compose up -d"
+alias dcd "docker compose down"
+alias dce "docker compose exec php bash"
+
 # export mac stuff
 export STARSHIP_DISTRO=""
 export MUSIC_APP="Music"
