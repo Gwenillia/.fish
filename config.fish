@@ -68,3 +68,7 @@ if test -f $LOCAL_CONFIG
 end
 starship init fish | source
 
+# Automatically source our H5P config if present
+if test -f $HOME/.config/fish/config.h5p.fish
+  source $HOME/.config/fish/config.h5p.fish
+end
