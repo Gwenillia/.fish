@@ -19,6 +19,11 @@ alias :q exit
 alias vim $HOME/nvim-nightly/bin/nvim
 alias cg gwen_custom_git_commands
 
+# alias for gh commands
+function gpch
+  gh pr checkout $argv
+end
+
 if type -q eza
   alias ll "eza -l -g --icons"
   alias lla "ll -a"
