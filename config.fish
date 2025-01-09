@@ -18,6 +18,7 @@ alias g git
 alias :q exit
 alias vim $HOME/nvim-nightly/bin/nvim
 alias cg gwen_custom_git_commands
+alias gp "git push"
 
 # alias for gh commands
 function gpch
