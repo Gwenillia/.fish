@@ -1,4 +1,4 @@
-function gitRtm -d "Will merge specific branch to master"
+function _gwen_custom_git_commands_rtm -d "Will merge specific branch to master"
   set branch $argv[1]
   set target_branch $argv[2]
   
@@ -25,4 +25,3 @@ function gitRtm -d "Will merge specific branch to master"
 
   echo "Done."
 end
-
