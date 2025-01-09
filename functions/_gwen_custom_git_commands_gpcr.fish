@@ -1,54 +1,5 @@
 function _gwen_custom_git_commands_gpcr -d "Create a pull request on GitHub"
-    # Function to detect the default branch using multiple methods
-    function detect_default_branch
-        # Attempt to get HEAD branch from remote
-        set remote_info (git remote show origin ^/dev/null)
-        if test -n "$remote_info"
-            for line in $remote_info
-                if string match -q "HEAD branch:" $line
-                    echo (string trim (string replace "HEAD branch:" "" $line))
-                    return
-                end
-            end
-        end
-
-        # Fallback: Check if 'main' exists locally
-        if git show-ref --verify --quiet "refs/heads/main"
-            echo "main"
-            return
-        end
-
-        # Fallback: Check if 'master' exists locally
-        if git show-ref --verify --quiet "refs/heads/master"
-            echo "master"
-            return
-        end
-
-        # Fallback: Use the current branch
-        set current_branch (git symbolic-ref --short HEAD 2>/dev/null)
-        if test -n "$current_branch"
-            echo "$current_branch"
-            return
-        end
-
-        # If all else fails, return empty
-        echo ""
-    end
-
-    # Attempt to detect the default branch
-    set default_branch (detect_default_branch)
-
-    # If detection failed, prompt the user or set a known default
-    if test -z "$default_branch"
-        echo "Warning: Unable to detect default branch."
-        read -P "Enter the default branch name (default: main): " user_branch
-        if test -n "$user_branch"
-            set default_branch $user_branch
-        else
-            set default_branch "main"
-            echo "Using 'main' as the default branch."
-        end
-    end
+    set default_branch "main"  # Change this to your default branch if different
 
     # Display help if no arguments are provided
     if test (count $argv) -eq 0
@@ -79,18 +30,6 @@ function _gwen_custom_git_commands_gpcr -d "Create a pull request on GitHub"
     if test -z "$title"
         echo "Error: PR title is required."
         echo "Usage: gpcr [target_branch] \"PR title\""
-        return 1
-    end
-
-    # Validate that the target branch name does not contain spaces
-    if string match -q " " "$target_branch"
-        echo "Error: Branch names cannot contain spaces."
-        return 1
-    end
-
-    # Validate that the target branch exists locally
-    if not git show-ref --verify --quiet "refs/heads/$target_branch"
-        echo "Error: Target branch '$target_branch' does not exist locally."
         return 1
     end
 
