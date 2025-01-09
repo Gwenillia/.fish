@@ -14,6 +14,7 @@ function gwen_custom_git_commands
       echo "  flist      Fetches, checks for gone branches, deletes them or says none"
       echo "  forget     Lists branches that are gone"
       echo "  uncommit   Backs out of the last commit but keeps the changes"
+      echo "  gpcr       Create a PR on github"
     case "rtm"
       _gwen_custom_git_commands_rtm $argv[2..-1]
     case "nah"
