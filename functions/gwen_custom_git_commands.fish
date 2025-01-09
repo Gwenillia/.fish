@@ -24,6 +24,8 @@ function gwen_custom_git_commands
       _gwen_custom_git_commands_forget
     case "uncommit"
       _gwen_custom_git_commands_uncommit
+    case "gpcr"
+      _gwen_custom_git_commands_gpcr
     case "*"
       echo "Unknown subcommand: $argv[1]"
   end
