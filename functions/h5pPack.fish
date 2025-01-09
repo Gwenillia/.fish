@@ -22,7 +22,7 @@ function h5pPack --description "Pack H5P content with optional build & upload"
     echo "Added source line to ~/.config/fish/config.fish"
   end
 
-  # source it now so we pick up previously stored variables
+  # Source it now so we pick up previously stored variables
   if test -f $H5P_CONFIG_FILE
     source $H5P_CONFIG_FILE
   end
@@ -130,20 +130,44 @@ function h5pPack --description "Pack H5P content with optional build & upload"
         case -u --upload
           set upload "yes"
         case -h --help
-          echo "Usage: h5pPack [options]"
+          # Enhanced Help Message with Colors and Formatting
+          set_color blue
+          echo "==============================="
+          echo "         h5pPack Help          "
+          echo "==============================="
+          set_color normal
           echo
-          echo "Pack the current H5P library folder into a .h5p file using"
-          echo "the library name and version from library.json."
-          echo "Then moves it to the destination folder ($DESTINATION_DIR)."
+          set_color --bold "Usage:" normal
+          echo "  h5pPack [options]"
           echo
-          echo "Options:"
-          echo "  -b, --build   Build the library before packing"
-          echo "  -u, --upload  Upload the newly created .h5p file to $UPLOAD_URL_H5P"
-          echo "  -h, --help    Show this help message and exit"
+          set_color --bold "Description:" normal
+          echo "  Pack the current H5P library folder into a .h5p file using"
+          echo "  the library name and version from library.json."
+          echo "  Then moves it to the destination folder ($DESTINATION_DIR)."
+          echo
+          set_color --bold "Options:" normal
+          set_color green
+          echo "  -b, --build" 
+          set_color normal
+          echo "      Build the library before packing."
+          set_color green
+          echo "  -u, --upload"
+          set_color normal
+          echo "      Upload the newly created .h5p file to $UPLOAD_URL_H5P."
+          set_color green
+          echo "  -h, --help"
+          set_color normal
+          echo "      Show this help message and exit."
+          echo
+          set_color blue
+          echo "==============================="
+          set_color normal
           return 0
         case '*'
-          echo "Invalid argument: $arg"
-          echo "Use -h or --help for usage"
+          set_color red
+          echo "Error: Invalid argument: $arg"
+          set_color normal
+          echo "Use -h or --help for usage."
           return 1
       end
     end
@@ -155,7 +179,9 @@ function h5pPack --description "Pack H5P content with optional build & upload"
   set STARTING_FOLDER (basename "$PWD")
 
   if not test -f library.json
-    echo "No library.json found in the current directory"
+    set_color red
+    echo "Error: No library.json found in the current directory."
+    set_color normal
     return 1
   end
 
@@ -166,7 +192,9 @@ function h5pPack --description "Pack H5P content with optional build & upload"
   set PATCH (jq -r '.patchVersion' library.json)
 
   if test -z "$MAJOR" -o -z "$MINOR" -o -z "$PATCH"
-    echo "Failed to extract version from library.json"
+    set_color red
+    echo "Error: Failed to extract version from library.json."
+    set_color normal
     return 1
   end
 
@@ -178,11 +206,25 @@ function h5pPack --description "Pack H5P content with optional build & upload"
 
   # Build first if requested
   if test "$build" = "yes"
+    echo "Building the library..."
     h5p utils build "$STARTING_FOLDER"
+    if test $status -ne 0
+      set_color red
+      echo "Error: Build failed."
+      set_color normal
+      return 1
+    end
   end
 
   # Always pack
+  echo "Packing the library..."
   h5p utils pack "$STARTING_FOLDER" "$DESTINATION_FILE"
+  if test $status -ne 0
+    set_color red
+    echo "Error: Packing failed."
+    set_color normal
+    return 1
+  end
 
   # Move the file to DESTINATION_DIR
   mkdir -p "$DESTINATION_DIR"
@@ -204,14 +246,20 @@ function h5pPack --description "Pack H5P content with optional build & upload"
     set STATUS $status
 
     if test $STATUS -eq 0
-      echo "File uploaded successfully."
+      set_color green
+      echo "Success: File uploaded successfully."
+      set_color normal
       echo "Server response: $RESPONSE"
     else
+      set_color red
       echo "Error: File upload failed."
+      set_color normal
       echo "cURL output: $RESPONSE"
     end
   end
 
   cd "$STARTING_FOLDER"
-  echo "Packed $DESTINATION_FILE to $DESTINATION_DIR"
+  set_color green
+  echo "Success: Packed $DESTINATION_FILE to $DESTINATION_DIR"
+  set_color normal
 end
