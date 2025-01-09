@@ -29,6 +29,10 @@ function gcm
   g commit -m $argv
 end
 
+function grc
+  gh repo clone $argv
+end
+
 if type -q eza
   alias ll "eza -l -g --icons"
   alias lla "ll -a"
