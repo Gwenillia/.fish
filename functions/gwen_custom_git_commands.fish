@@ -13,9 +13,9 @@ function gwen_custom_git_commands
 
   switch $argv[1]
     case "help"
-      echo ""
+      echo
       echo "$COLOR_HEADER Usage:$COLOR_RESET custom_git_commands [help|rtm|nah|flist|forget|uncommit|gpcr]"
-      echo ""
+      echo
       echo "$COLOR_HEADER Subcommands:$COLOR_RESET"
       echo "  $COLOR_OPTION rtm$COLOR_RESET        🔀 Merges specific branch to master"
       echo "  $COLOR_OPTION nah$COLOR_RESET        🛠️  Resets to HEAD, cleans untracked files and aborts rebase if needed"
@@ -23,21 +23,21 @@ function gwen_custom_git_commands
       echo "  $COLOR_OPTION forget$COLOR_RESET     ❓ Lists branches that are gone"
       echo "  $COLOR_OPTION uncommit$COLOR_RESET   🔙 Backs out of the last commit but keeps the changes"
       echo "  $COLOR_OPTION gpcr$COLOR_RESET       🚀 Create a PR on GitHub"
-      echo ""
+      echo
       echo "$COLOR_HEADER gpcr Usage:$COLOR_RESET"
       echo "  gpcr [target_branch] \"PR title\""
-      echo ""
+      echo
       echo "$COLOR_HEADER Examples:$COLOR_RESET"
       echo "  $COLOR_EXAMPLE gpcr feat/xxx-x-x \"Fix blabla\"$COLOR_RESET"
       echo "  $COLOR_EXAMPLE gpcr \"Awesome PR Title\"$COLOR_RESET"
-      echo ""
+      echo
       echo "$COLOR_HEADER rtm Usage:$COLOR_RESET"
       echo "  rtm branch_name [target_branch]"
-      echo ""
+      echo
       echo "$COLOR_HEADER Examples:$COLOR_RESET"
       echo "  $COLOR_EXAMPLE rtm staging$COLOR_RESET"
       echo "  $COLOR_EXAMPLE rtm staging nightly$COLOR_RESET"
-      echo ""
+      echo
     case "rtm"
       _gwen_custom_git_commands_rtm $argv[2..-1]
     case "nah"
