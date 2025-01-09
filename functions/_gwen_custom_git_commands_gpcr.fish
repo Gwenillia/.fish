@@ -1,4 +1,4 @@
-function gpcr -d "Create a pull request on GitHub"
+function _gwen_custom_git_commands_gpcr -d "Create a pull request on GitHub"
     # Initialize local variables
     set -l branch ""
     set -l title ""
