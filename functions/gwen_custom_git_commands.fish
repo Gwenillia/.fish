@@ -1,4 +1,4 @@
-function custom_git_commands
+function gwen_custom_git_commands
   if test (count $argv) -lt 1
     echo "Usage: custom_git_commands [help|rtm|nah|flist|forget|uncommit]"
     return
