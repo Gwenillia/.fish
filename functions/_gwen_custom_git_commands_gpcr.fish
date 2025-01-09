@@ -45,6 +45,11 @@ function gpcr -d "Create a pull request on GitHub"
         return 1
     end
 
+    # Debugging: Display the parsed branch and title
+    # Uncomment the lines below if you need to debug
+    echo "Debug: Branch: '$branch'"
+    echo "Debug: Title: '$title'"
+
     # Execute the gh pr create command
     if test -n "$branch"
         gh pr create -a "Gwenillia" -t "$title" -B "$branch"
