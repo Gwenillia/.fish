@@ -24,6 +24,10 @@ function gpch
   gh pr checkout $argv
 end
 
+function gcm
+  g commit -m $argv
+end
+
 if type -q eza
   alias ll "eza -l -g --icons"
   alias lla "ll -a"
