@@ -1,265 +1,256 @@
 function h5pPack --description "Pack H5P content with optional build & upload"
-  # The separate config file we want to maintain
-  set H5P_CONFIG_FILE $HOME/.config/fish/config.h5p.fish
+	# Define color and style variables with correct order: color first, then style
+	set COLOR_HEADER (set_color blue --bold)
+	set COLOR_SUBHEADER (set_color green --bold)
+	set COLOR_OPTION (set_color yellow --bold)
+	set COLOR_EXAMPLE (set_color magenta --bold)
+	set COLOR_RESET (set_color normal)
 
-  # 0. Ensure config.h5p.fish exists, and that config.fish sources it
-  if not test -f $H5P_CONFIG_FILE
-    touch $H5P_CONFIG_FILE
-    echo "# This file is auto-managed by h5pPack" >> $H5P_CONFIG_FILE
-    echo "Created $H5P_CONFIG_FILE"
-  end
+	# The separate config file we want to maintain
+	set H5P_CONFIG_FILE $HOME/.config/fish/config.h5p.fish
 
-  # Make sure config.fish sources it with a literal $HOME path
-  if not grep -q "config.h5p.fish" ~/.config/fish/config.fish
-    echo "" >> ~/.config/fish/config.fish
-    echo "# Automatically source our H5P config if present" >> ~/.config/fish/config.fish
+	# 0. Ensure config.h5p.fish exists, and that config.fish sources it
+	if not test -f $H5P_CONFIG_FILE
+		touch $H5P_CONFIG_FILE
+		echo "# This file is auto-managed by h5pPack" >> $H5P_CONFIG_FILE
+		echo "Created $H5P_CONFIG_FILE"
+	end
 
-    # Notice we escape the $ so that fish writes the literal '$HOME'
-    echo "if test -f \$HOME/.config/fish/config.h5p.fish" >> ~/.config/fish/config.fish
-    echo "  source \$HOME/.config/fish/config.h5p.fish" >> ~/.config/fish/config.fish
-    echo "end" >> ~/.config/fish/config.fish
+	# Make sure config.fish sources it with a literal $HOME path
+	if not grep -q "config.h5p.fish" ~/.config/fish/config.fish
+		echo "" >> ~/.config/fish/config.fish
+		echo "# Automatically source our H5P config if present" >> ~/.config/fish/config.fish
 
-    echo "Added source line to ~/.config/fish/config.fish"
-  end
+		# Notice we escape the $ so that fish writes the literal '$HOME'
+		echo "if test -f \$HOME/.config/fish/config.h5p.fish" >> ~/.config/fish/config.fish
+		echo "	source \$HOME/.config/fish/config.h5p.fish" >> ~/.config/fish/config.fish
+		echo "end" >> ~/.config/fish/config.fish
 
-  # Source it now so we pick up previously stored variables
-  if test -f $H5P_CONFIG_FILE
-    source $H5P_CONFIG_FILE
-  end
+		echo "Added source line to ~/.config/fish/config.fish"
+	end
 
-  #
-  # 1. Prompt for DESTINATION_DIR if it's not set yet
-  #
-  if not set -q DESTINATION_DIR
-    echo "No destination directory is currently set."
-    echo "Please enter the path you'd like to use for .h5p files (no default):"
-    read -l customDest
+	# Source it now so we pick up previously stored variables
+	if test -f $H5P_CONFIG_FILE
+		source $H5P_CONFIG_FILE
+	end
 
-    while test -z "$customDest"
-      echo "You must specify a destination directory. Please try again."
-      read -l customDest
-    end
+	#
+	# 1. Prompt for DESTINATION_DIR if it's not set yet
+	#
+	if not set -q DESTINATION_DIR
+		echo "No destination directory is currently set."
+		echo "Please enter the path you'd like to use for .h5p files (no default):"
+		read -l customDest
 
-    set -gx DESTINATION_DIR "$customDest"
+		while test -z "$customDest"
+			echo "You must specify a destination directory. Please try again."
+			read -l customDest
+		end
 
-    # Write it to config.h5p.fish
-    if not grep -q "DESTINATION_DIR" $H5P_CONFIG_FILE
-      echo "" >> $H5P_CONFIG_FILE
-      echo "# h5pPack DESTINATION_DIR" >> $H5P_CONFIG_FILE
-      echo "set -gx DESTINATION_DIR '$customDest'" >> $H5P_CONFIG_FILE
-      echo "Destination directory persisted in $H5P_CONFIG_FILE"
-    end
+		set -gx DESTINATION_DIR "$customDest"
 
-    echo "Destination directory set to: $DESTINATION_DIR"
-  end
+		# Write it to config.h5p.fish
+		if not grep -q "DESTINATION_DIR" $H5P_CONFIG_FILE
+			echo "" >> $H5P_CONFIG_FILE
+			echo "# h5pPack DESTINATION_DIR" >> $H5P_CONFIG_FILE
+			echo "set -gx DESTINATION_DIR '$customDest'" >> $H5P_CONFIG_FILE
+			echo "Destination directory persisted in $H5P_CONFIG_FILE"
+		end
 
-  #
-  # 2. Prompt for username, password, and URL if they're not set (no defaults)
-  #
-  if not set -q USERNAME_H5P
-    echo "No username is set for H5P uploads."
-    echo "Please enter your H5P server username (no default):"
-    read -l customUser
+		echo "Destination directory set to: $DESTINATION_DIR"
+	end
 
-    while test -z "$customUser"
-      echo "You must specify a username. Please try again."
-      read -l customUser
-    end
+	#
+	# 2. Prompt for username, password, and URL if they're not set (no defaults)
+	#
+	if not set -q USERNAME_H5P
+		echo "No username is set for H5P uploads."
+		echo "Please enter your H5P server username (no default):"
+		read -l customUser
 
-    set -gx USERNAME_H5P "$customUser"
+		while test -z "$customUser"
+			echo "You must specify a username. Please try again."
+			read -l customUser
+		end
 
-    if not grep -q "USERNAME_H5P" $H5P_CONFIG_FILE
-      echo "" >> $H5P_CONFIG_FILE
-      echo "# h5pPack USERNAME" >> $H5P_CONFIG_FILE
-      echo "set -gx USERNAME_H5P '$customUser'" >> $H5P_CONFIG_FILE
-      echo "USERNAME_H5P persisted in $H5P_CONFIG_FILE"
-    end
-  end
+		set -gx USERNAME_H5P "$customUser"
 
-  if not set -q PASSWORD_H5P
-    echo "No password is set for H5P uploads."
-    echo "Please enter your H5P server password (no default):"
-    read -l customPass
+		if not grep -q "USERNAME_H5P" $H5P_CONFIG_FILE
+			echo "" >> $H5P_CONFIG_FILE
+			echo "# h5pPack USERNAME" >> $H5P_CONFIG_FILE
+			echo "set -gx USERNAME_H5P '$customUser'" >> $H5P_CONFIG_FILE
+			echo "USERNAME_H5P persisted in $H5P_CONFIG_FILE"
+		end
+	end
 
-    while test -z "$customPass"
-      echo "You must specify a password. Please try again."
-      read -l customPass
-    end
+	if not set -q PASSWORD_H5P
+		echo "No password is set for H5P uploads."
+		echo "Please enter your H5P server password (no default):"
+		read -s -l customPass
 
-    set -gx PASSWORD_H5P "$customPass"
+		while test -z "$customPass"
+			echo "You must specify a password. Please try again."
+			read -s -l customPass
+		end
 
-    if not grep -q "PASSWORD_H5P" $H5P_CONFIG_FILE
-      echo "" >> $H5P_CONFIG_FILE
-      echo "# h5pPack PASSWORD" >> $H5P_CONFIG_FILE
-      echo "set -gx PASSWORD_H5P '$customPass'" >> $H5P_CONFIG_FILE
-      echo "PASSWORD_H5P persisted in $H5P_CONFIG_FILE"
-    end
-  end
+		set -gx PASSWORD_H5P "$customPass"
 
-  if not set -q UPLOAD_URL_H5P
-    echo "No upload URL is set for H5P uploads."
-    echo "Please enter the server URL (no default):"
-    read -l customUrl
+		if not grep -q "PASSWORD_H5P" $H5P_CONFIG_FILE
+			echo "" >> $H5P_CONFIG_FILE
+			echo "# h5pPack PASSWORD" >> $H5P_CONFIG_FILE
+			echo "set -gx PASSWORD_H5P '$customPass'" >> $H5P_CONFIG_FILE
+			echo "PASSWORD_H5P persisted in $H5P_CONFIG_FILE"
+		end
+	end
 
-    while test -z "$customUrl"
-      echo "You must specify a URL. Please try again."
-      read -l customUrl
-    end
+	if not set -q UPLOAD_URL_H5P
+		echo "No upload URL is set for H5P uploads."
+		echo "Please enter the server URL (no default):"
+		read -l customUrl
 
-    set -gx UPLOAD_URL_H5P "$customUrl"
+		while test -z "$customUrl"
+			echo "You must specify a URL. Please try again."
+			read -l customUrl
+		end
 
-    if not grep -q "UPLOAD_URL_H5P" $H5P_CONFIG_FILE
-      echo "" >> $H5P_CONFIG_FILE
-      echo "# h5pPack UPLOAD_URL" >> $H5P_CONFIG_FILE
-      echo "set -gx UPLOAD_URL_H5P '$customUrl'" >> $H5P_CONFIG_FILE
-      echo "UPLOAD_URL_H5P persisted in $H5P_CONFIG_FILE"
-    end
-  end
+		set -gx UPLOAD_URL_H5P "$customUrl"
 
-  #
-  # 3. Parse the arguments (supports multiple: -b/--build, -u/--upload, -h/--help)
-  #
-  set build "no"
-  set upload "no"
+		if not grep -q "UPLOAD_URL_H5P" $H5P_CONFIG_FILE
+			echo "" >> $H5P_CONFIG_FILE
+			echo "# h5pPack UPLOAD_URL" >> $H5P_CONFIG_FILE
+			echo "set -gx UPLOAD_URL_H5P '$customUrl'" >> $H5P_CONFIG_FILE
+			echo "UPLOAD_URL_H5P persisted in $H5P_CONFIG_FILE"
+		end
+	end
 
-  if test (count $argv) -gt 0
-    for arg in $argv
-      switch $arg
-        case -b --build
-          set build "yes"
-        case -u --upload
-          set upload "yes"
-        case -h --help
-          # Enhanced Help Message with Colors and Formatting
-          set_color blue
-          echo "==============================="
-          echo "         h5pPack Help          "
-          echo "==============================="
-          set_color normal
-          echo
-          set_color --bold "Usage:" normal
-          echo "  h5pPack [options]"
-          echo
-          set_color --bold "Description:" normal
-          echo "  Pack the current H5P library folder into a .h5p file using"
-          echo "  the library name and version from library.json."
-          echo "  Then moves it to the destination folder ($DESTINATION_DIR)."
-          echo
-          set_color --bold "Options:" normal
-          set_color green
-          echo "  -b, --build" 
-          set_color normal
-          echo "      Build the library before packing."
-          set_color green
-          echo "  -u, --upload"
-          set_color normal
-          echo "      Upload the newly created .h5p file to $UPLOAD_URL_H5P."
-          set_color green
-          echo "  -h, --help"
-          set_color normal
-          echo "      Show this help message and exit."
-          echo
-          set_color blue
-          echo "==============================="
-          set_color normal
-          return 0
-        case '*'
-          set_color red
-          echo "Error: Invalid argument: $arg"
-          set_color normal
-          echo "Use -h or --help for usage."
-          return 1
-      end
-    end
-  end
+	#
+	# 3. Parse the arguments (supports multiple: -b/--build, -u/--upload, -h/--help)
+	#
+	set build "no"
+	set upload "no"
 
-  #
-  # 4. Pack logic
-  #
-  set STARTING_FOLDER (basename "$PWD")
+	if test (count $argv) -gt 0
+		for arg in $argv
+			switch $arg
+				case -b --build
+					set build "yes"
+				case -u --upload
+					set upload "yes"
+				case -h --help
+					# Styled Help Message
+					echo
+					echo "$COLOR_HEADER ==============================="
+					echo "         h5pPack Help"
+					echo "===============================$COLOR_RESET"
+					echo
+					echo "$COLOR_HEADER Usage:$COLOR_RESET"
+					echo "  h5pPack [options]"
+					echo
+					echo "$COLOR_HEADER Description:$COLOR_RESET"
+					echo "  Pack the current H5P library folder into a .h5p file using"
+					echo "  the library name and version from library.json."
+					echo "  Then moves it to the destination folder ($DESTINATION_DIR)."
+					echo
+					echo "$COLOR_HEADER Options:$COLOR_RESET"
+					echo "  $COLOR_OPTION -b, --build$COLOR_RESET      🔨 Build the library before packing."
+					echo "  $COLOR_OPTION -u, --upload$COLOR_RESET     📤 Upload the newly created .h5p file to $UPLOAD_URL_H5P."
+					echo "  $COLOR_OPTION -h, --help$COLOR_RESET       ❓ Show this help message and exit."
+					echo
+					echo "$COLOR_HEADER Examples:$COLOR_RESET"
+					echo "  $COLOR_EXAMPLE h5pPack --build --upload$COLOR_RESET"
+					echo "  $COLOR_EXAMPLE h5pPack -b$COLOR_RESET"
+					echo "  $COLOR_EXAMPLE h5pPack -u$COLOR_RESET"
+					echo
+					echo "$COLOR_HEADER Notes:$COLOR_RESET"
+					echo "  Ensure that your credentials and upload URL are correctly set."
+					echo
+					echo "$COLOR_HEADER ==============================="
+					echo
+					return 0
+				case '*'
+					echo "$COLOR_HEADER ❌ Error:$COLOR_RESET Invalid argument: $arg"
+					echo "Use $COLOR_OPTION -h$COLOR_RESET or $COLOR_OPTION --help$COLOR_RESET for usage information."
+					return 1
+			end
+		end
+	end
 
-  if not test -f library.json
-    set_color red
-    echo "Error: No library.json found in the current directory."
-    set_color normal
-    return 1
-  end
+	#
+	# 4. Pack logic
+	#
+	set STARTING_FOLDER (basename "$PWD")
 
-  # Use jq to parse JSON
-  set MACHINE_NAME (jq -r '.machineName' library.json)
-  set MAJOR (jq -r '.majorVersion' library.json)
-  set MINOR (jq -r '.minorVersion' library.json)
-  set PATCH (jq -r '.patchVersion' library.json)
+	if not test -f library.json
+		echo "$COLOR_HEADER ❌ Error:$COLOR_RESET No library.json found in the current directory."
+		return 1
+	end
 
-  if test -z "$MAJOR" -o -z "$MINOR" -o -z "$PATCH"
-    set_color red
-    echo "Error: Failed to extract version from library.json."
-    set_color normal
-    return 1
-  end
+	# Use jq to parse JSON
+	set MACHINE_NAME (jq -r '.machineName' library.json)
+	set MAJOR (jq -r '.majorVersion' library.json)
+	set MINOR (jq -r '.minorVersion' library.json)
+	set PATCH (jq -r '.patchVersion' library.json)
 
-  set VERSION "$MAJOR.$MINOR.$PATCH"
-  echo "Version: $VERSION"
+	if test -z "$MAJOR" -o -z "$MINOR" -o -z "$PATCH"
+		echo "$COLOR_HEADER ❌ Error:$COLOR_RESET Failed to extract version from library.json."
+		return 1
+	end
 
-  cd ..
-  set DESTINATION_FILE "$MACHINE_NAME-$VERSION.h5p"
+	set VERSION "$MAJOR.$MINOR.$PATCH"
+	echo "Version: $VERSION"
 
-  # Build first if requested
-  if test "$build" = "yes"
-    echo "Building the library..."
-    h5p utils build "$STARTING_FOLDER"
-    if test $status -ne 0
-      set_color red
-      echo "Error: Build failed."
-      set_color normal
-      return 1
-    end
-  end
+	cd ..
+	set DESTINATION_FILE "$MACHINE_NAME-$VERSION.h5p"
 
-  # Always pack
-  echo "Packing the library..."
-  h5p utils pack "$STARTING_FOLDER" "$DESTINATION_FILE"
-  if test $status -ne 0
-    set_color red
-    echo "Error: Packing failed."
-    set_color normal
-    return 1
-  end
+	# Build first if requested
+	if test "$build" = "yes"
+		echo "$COLOR_SUBHEADER 🛠️ Building the library...$COLOR_RESET"
+		h5p utils build "$STARTING_FOLDER"
+		if test $status -ne 0
+			echo "$COLOR_HEADER ❌ Error:$COLOR_RESET Build failed."
+			return 1
+		end
+	end
 
-  # Move the file to DESTINATION_DIR
-  mkdir -p "$DESTINATION_DIR"
-  mv "$DESTINATION_FILE" "$DESTINATION_DIR"
+	# Always pack
+	echo "$COLOR_SUBHEADER 📦 Packing the library...$COLOR_RESET"
+	h5p utils pack "$STARTING_FOLDER" "$DESTINATION_FILE"
+	if test $status -ne 0
+		echo "$COLOR_HEADER ❌ Error:$COLOR_RESET Packing failed."
+		return 1
+	end
 
-  #
-  # 5. Upload if requested
-  #
-  if test "$upload" = "yes"
-    echo "Uploading library to $UPLOAD_URL_H5P ..."
+	# Move the file to DESTINATION_DIR
+	mkdir -p "$DESTINATION_DIR"
+	mv "$DESTINATION_FILE" "$DESTINATION_DIR"
 
-    set uploadedFile "$DESTINATION_DIR/$DESTINATION_FILE"
+	#
+	# 5. Upload if requested
+	#
+	if test "$upload" = "yes"
+		echo "$COLOR_SUBHEADER 📤 Uploading library to $UPLOAD_URL_H5P ...$COLOR_RESET"
 
-    set RESPONSE (curl -u "$USERNAME_H5P:$PASSWORD_H5P" \
-      -H "Accept: application/json" \
-      -F "h5p=@$uploadedFile" \
-      "$UPLOAD_URL_H5P" 2>&1)
+		set uploadedFile "$DESTINATION_DIR/$DESTINATION_FILE"
 
-    set STATUS $status
+		set RESPONSE (curl -u "$USERNAME_H5P:$PASSWORD_H5P" \
+			-H "Accept: application/json" \
+			-F "h5p=@$uploadedFile" \
+			"$UPLOAD_URL_H5P" 2>&1)
 
-    if test $STATUS -eq 0
-      set_color green
-      echo "Success: File uploaded successfully."
-      set_color normal
-      echo "Server response: $RESPONSE"
-    else
-      set_color red
-      echo "Error: File upload failed."
-      set_color normal
-      echo "cURL output: $RESPONSE"
-    end
-  end
+		set STATUS $status
 
-  cd "$STARTING_FOLDER"
-  set_color green
-  echo "Success: Packed $DESTINATION_FILE to $DESTINATION_DIR"
-  set_color normal
+		if test $STATUS -eq 0
+			echo "$COLOR_HEADER ✅ Success:$COLOR_RESET File uploaded successfully."
+			echo "Server response: $RESPONSE"
+		else
+			echo "$COLOR_HEADER ❌ Error:$COLOR_RESET File upload failed."
+			echo "cURL output: $RESPONSE"
+		end
+	end
+
+	cd "$STARTING_FOLDER"
+	echo "$COLOR_HEADER ✅ Success:$COLOR_RESET Packed $DESTINATION_FILE to $DESTINATION_DIR"
+
+	# Reset color at the end to prevent color bleeding
+	set_color normal
 end
