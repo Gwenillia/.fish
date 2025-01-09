@@ -1,12 +1,12 @@
 function gwen_custom_git_commands
   if test (count $argv) -lt 1
-    echo "Usage: custom_git_commands [help|rtm|nah|flist|forget|uncommit]"
+    echo "Usage: custom_git_commands [help|rtm|nah|flist|forget|uncommit|gpcr]"
     return
   end
 
   switch $argv[1]
     case "help"
-      echo "Usage: custom_git_commands [help|rtm|nah|flist|forget|uncommit]"
+      echo "Usage: custom_git_commands [help|rtm|nah|flist|forget|uncommit|gpcr]"
       echo
       echo "Subcommands:"
       echo "  rtm        Merges specific branch to master"
@@ -15,6 +15,20 @@ function gwen_custom_git_commands
       echo "  forget     Lists branches that are gone"
       echo "  uncommit   Backs out of the last commit but keeps the changes"
       echo "  gpcr       Create a PR on github"
+      echo
+      echo "gpcr Usage:"
+      echo "  gpcr [target_branch] \"PR title\""
+      echo
+      echo "Examples:"
+      echo "  gpcr feat/xxx-x-x \"Fix blabla\""
+      echo "  gpcr \"Awesome pr Title\""
+      echo
+      echo "rtm Usage:"
+      echo "  rtm branch_name [target_branch]"
+      echo
+      echo "Examples:"
+      echo "  rtm staging"
+      echo "  rtm staging nightly"
     case "rtm"
       _gwen_custom_git_commands_rtm $argv[2..-1]
     case "nah"
