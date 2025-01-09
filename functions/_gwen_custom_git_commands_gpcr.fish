@@ -1,4 +1,4 @@
-function gpcr
+function _gwen_custom_git_commands_gpcr
     set branch ""
     set title ""
 
