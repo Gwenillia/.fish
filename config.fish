@@ -14,6 +14,7 @@ alias ls "ls -p -G"
 alias la "ls -A"
 alias ll "ls -l"
 alias lla "ll -A"
+alias llt "ll --tree"
 alias g git
 alias :q exit
 alias vim $HOME/nvim-nightly/bin/nvim
