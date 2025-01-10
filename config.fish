@@ -20,6 +20,8 @@ alias vim $HOME/nvim-nightly/bin/nvim
 alias cg gwen_custom_git_commands
 alias gp "git push"
 alias nb "npm run build"
+alias nw "npm run watch"
+alias ni "npm install"
 
 # alias for gh commands
 function gpch
