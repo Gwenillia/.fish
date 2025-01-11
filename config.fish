@@ -24,6 +24,15 @@ alias nb "npm run build"
 alias nw "npm run watch"
 alias ni "npm install"
 
+# basically find what window are open
+function ff
+    aerospace list-windows --all | peco | read -l selected
+    if test -n "$selected"
+        set window_id (echo $selected | awk '{print $1}')
+        aerospace focus --window-id "$window_id"
+    end
+end
+
 # alias for gh commands
 function gpch
   gh pr checkout $argv
