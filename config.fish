@@ -19,7 +19,8 @@ alias g git
 alias :q exit
 alias vim $HOME/nvim-nightly/bin/nvim
 alias cg gwen_custom_git_commands
-alias gp "git push"
+alias gp "git pull"
+alias gps "git push"
 alias nb "npm run build"
 alias nw "npm run watch"
 alias ni "npm install"
