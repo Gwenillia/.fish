@@ -47,6 +47,10 @@ function grc
   gh repo clone $argv
 end
 
+function gbc
+  g checkout -b $argv
+end
+
 if type -q eza
   alias ll "eza -l -g --icons"
   alias lla "ll -a"
