@@ -51,6 +51,11 @@ function gbc
   g checkout -b $argv
 end
 
+# stripe m3u8 to mp3
+function m3u8
+  ffmpeg -i "$argv" -f mp3 mp3.mp3
+end
+
 if type -q eza
   alias ll "eza -l -g --icons"
   alias lla "ll -a"
