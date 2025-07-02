@@ -110,3 +110,6 @@ starship init fish | source
 if test -f $HOME/.config/fish/config.h5p.fish
   source $HOME/.config/fish/config.h5p.fish
 end
+
+# Added by LM Studio CLI (lms)
+set -gx PATH $PATH $HOME/.lmstudio/bin
