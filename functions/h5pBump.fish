@@ -76,9 +76,35 @@ function h5pBump -d "Bump the patch version of the H5P content type and commit t
     end
 
     set_color blue
-    echo "Adding library.json to git."
+    echo "Staging only version number changes in library.json"
     set_color normal
-    git add library.json
+
+    git restore --staged library.json
+
+    # Use git diff to get hunks and auto-select only the version ones
+    set TMP_HUNK /tmp/version_hunks.txt
+
+    git diff -U0 -- library.json > $TMP_HUNK
+
+    if not test -s $TMP_HUNK
+        set_color yellow
+        echo "No changes detected in library.json"
+        set_color normal
+        return 1
+    end
+
+    # Loop through hunks and stage the ones that touch version keys
+    git add -p library.json | while read -l line
+        if string match -q "*majorVersion*" -- $line; or string match -q "*minorVersion*" -- $line; or string match -q "*patchVersion*" -- $line
+            echo y
+        else
+            echo n
+        end
+    end | git add -p library.json
+
+    set_color green
+    echo "✅ Only version number changes staged in library.json"
+    set_color normal
 
     if not git commit -m "Bump to $VERSION"
         set_color red
