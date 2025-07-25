@@ -74,8 +74,32 @@ function m3u8
 end
 
 if type -q eza
-  alias ll "eza -l -g --icons"
-  alias lla "ll -a"
+  # Long list, group, icons — like `ls -l`
+  alias ll "eza -l --git --icons"
+
+  # Add dotfiles
+  alias lla "eza -la --git --icons"
+
+  # Tree view from current dir
+  alias llt "eza --tree --icons"
+
+  # Simple list, still colorful
+  alias ls "eza --icons"
+
+  # Show all files
+  alias la "eza -a --icons"
+else
+  # Fallback to ls with color
+  set -l os (uname)
+  if test "$os" = "Darwin"
+    alias ls "ls -Gp"
+  else if test "$os" = "Linux"
+    alias ls "ls -p --color=auto"
+  end
+  alias la "ls -A"
+  alias ll "ls -l"
+  alias lla "ll -A"
+  alias llt "ll --tree"
 end
 
 ## docker aliases
