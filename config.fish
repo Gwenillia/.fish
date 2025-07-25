@@ -1,6 +1,24 @@
+# If we're in a container, force CD to macOS path
+if test -d /Users/gwentripet-costet
+  cd /Users/gwentripet-costet
+end
+
 set fish_greeting ""
 
 set -gx TERM xterm-256color
+
+# Detect platform
+set -l os (uname)
+
+# Set HOME_MAC and HOME_LINUX manually (optional but clean)
+if test $os = "Darwin"
+    set -gx DOTFILES_HOME $HOME
+    alias vim $DOTFILES_HOME/nvim-nightly/bin/nvim
+else if test $os = "Linux"
+    set -gx DOTFILES_HOME /Users/gwentripet-costet
+    ln -sfn /Users/gwentripet-costet/.config/nvim ~/.config/nvim
+    alias vim /usr/bin/nvim
+end
 
 # theme
 set -g theme_color_scheme terminal-dark
@@ -17,7 +35,6 @@ alias lla "ll -A"
 alias llt "ll --tree"
 alias g git
 alias :q exit
-alias vim $HOME/nvim-nightly/bin/nvim
 alias cg gwen_custom_git_commands
 alias gp "git pull"
 alias gps "git push"
@@ -66,8 +83,15 @@ alias dcu "docker compose up -d"
 alias dcd "docker compose down"
 alias dce "docker compose exec php bash"
 
+# Starship distro
+switch (uname)
+  case Darwin
+    set -gx STARSHIP_DISTRO ""
+  case Linux
+    set -gx STARSHIP_DISTRO ""
+end
+
 # export mac stuff
-export STARSHIP_DISTRO=""
 export MUSIC_APP="Music"
 
 # set global  variables
@@ -85,11 +109,11 @@ set -gx PATH node_modules/.bin $PATH
 set -gx OPENAI_API_KEY $OPENAI_API_KEY
 
 # Pyenv
-set -gx PYENV_ROOT $HOME/.pyenv/shims
+set -gx PYENV_ROOT $DOTFILES_HOME/.pyenv/shims
 set -gx PATH $PYENV_ROOT:$PATH
 set -gx PIPENV_PYTHON $PYENV_ROOT/python
 
-set -gx PATH $HOME/.jenv/bin $PATH
+set -gx PATH $DOTFILES_HOME/.jenv/bin $PATH
 # NVM
 function __check_rvm --on-variable PWD --description 'Do nvm stuff'
   status --is-command-substitution; and return
@@ -107,9 +131,9 @@ end
 starship init fish | source
 
 # Automatically source our H5P config if present
-if test -f $HOME/.config/fish/config.h5p.fish
-  source $HOME/.config/fish/config.h5p.fish
+if test -f $DOTFILES_HOME/.config/fish/config.h5p.fish
+  source $DOTFILES_HOME/.config/fish/config.h5p.fish
 end
 
 # Added by LM Studio CLI (lms)
-set -gx PATH $PATH $HOME/.lmstudio/bin
+set -gx PATH $PATH $DOTFILES_HOME/.lmstudio/bin
