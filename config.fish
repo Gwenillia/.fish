@@ -7,6 +7,9 @@ set fish_greeting ""
 
 set -gx TERM xterm-256color
 
+set -g fish_term_title_use_path no
+set -g fish_term_title_use_command no
+
 # Detect platform
 set -l os (uname)
 
@@ -145,6 +148,7 @@ function __check_rvm --on-variable PWD --description 'Do nvm stuff'
   if test -f .nvmrc; and test -r .nvmrc;
     nvm use
   else
+    set -gx nvm_default_version v22
   end
 end
 
