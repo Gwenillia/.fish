@@ -111,11 +111,15 @@ alias dcd "docker compose down"
 alias dce "docker compose exec php bash"
 
 # Starship distro
-switch (uname)
-  case Darwin
-    set -gx STARSHIP_DISTRO ""
-  case Linux
-    set -gx STARSHIP_DISTRO ""
+if command -q starship
+  switch (uname)
+    case Darwin
+      set -gx STARSHIP_DISTRO ""
+    case Linux
+      set -gx STARSHIP_DISTRO ""
+  end
+
+  starship init fish | source
 end
 
 # export mac stuff
@@ -156,7 +160,6 @@ set LOCAL_CONFIG (dirname (status --current-filename))/config-local.fish
 if test -f $LOCAL_CONFIG
   source $LOCAL_CONFIG
 end
-starship init fish | source
 
 # Automatically source our H5P config if present
 if test -f $DOTFILES_HOME/.config/fish/config.h5p.fish
