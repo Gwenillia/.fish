@@ -1,7 +1,31 @@
-# If we're in a container, force CD to macOS path
-if test -d /Users/gwentripet-costet
-  cd /Users/gwentripet-costet
+# ---------------------------------
+# Workaround many laptops laptops
+# Normalize HOME on macOS: use /Users/<username> on this machine
+if test (uname) = "Darwin"
+    set real_home /Users/(id -un)
+
+    # If HOME doesn't match the real home but the real dir exists, fix it
+    if test -d $real_home; and test "$HOME" != "$real_home"
+        set -gx HOME $real_home
+    end
 end
+
+# If we're in a container or on macOS, prefer $HOME if valid.
+# If HOME is invalid (e.g. /root in a container), fall back to something under /Users.
+if test -d $HOME
+    cd $HOME
+else if test -d /Users/(id -un)
+    # If the current user also has a /Users/<username> directory, use that
+    cd /Users/(id -un)
+else if test -d /Users
+    # Generic fallback: pick the first directory under /Users (for mounted host homes in containers)
+    set first_user (ls /Users | head -n 1)
+    if test -n "$first_user"; and test -d /Users/$first_user
+        cd /Users/$first_user
+    end
+end
+# ---------------------------------
+
 
 set fish_greeting ""
 
@@ -18,9 +42,15 @@ if test $os = "Darwin"
     set -gx DOTFILES_HOME $HOME
     alias vim $DOTFILES_HOME/nvim-nightly/bin/nvim
 else if test $os = "Linux"
-    set -gx DOTFILES_HOME /Users/gwentripet-costet
-    ln -sfn /Users/gwentripet-costet/.config/nvim ~/.config/nvim
-    alias vim /usr/bin/nvim
+  # In containers, prefer the same mac home as above
+  if test -d $MAC_HOME
+      set -gx DOTFILES_HOME $MAC_HOME
+  else
+      set -gx DOTFILES_HOME $MAC_HOME_H5P
+  end
+
+  ln -sfn $DOTFILES_HOME/.config/nvim ~/.config/nvim
+  alias vim /usr/bin/nvim
 end
 
 # theme
