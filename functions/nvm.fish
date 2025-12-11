@@ -85,7 +85,7 @@ function nvm --description "Node version manager"
                         set arch x64
                     case arm64
                         string match --regex --quiet "v(?<major>\d+)" $ver
-                        if test "$os" = darwin -a $major -lt 16
+                        if test "$os" = darwin; and test -n "$major"; and test "$major" -lt 16
                             set arch x64
                         end
                     case armv6 armv6l
