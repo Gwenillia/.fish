@@ -40,7 +40,7 @@ set -l os (uname)
 # Set HOME_MAC and HOME_LINUX manually (optional but clean)
 if test $os = "Darwin"
     set -gx DOTFILES_HOME $HOME
-    alias vim $DOTFILES_HOME/nvim-nightly/bin/nvim
+    alias vim nvim
 else if test $os = "Linux"
   # In containers, prefer the same mac home as above
   if test -d $MAC_HOME
@@ -198,3 +198,7 @@ end
 
 # Added by LM Studio CLI (lms)
 set -gx PATH $PATH $DOTFILES_HOME/.lmstudio/bin
+
+# Added by OrbStack: command-line tools and integration
+# This won't be added again if you remove it.
+source ~/.orbstack/shell/init2.fish 2>/dev/null || :
